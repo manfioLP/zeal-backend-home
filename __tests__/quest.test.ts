@@ -35,7 +35,7 @@ describe('Quest test', () => {
         expect(res.json).toHaveBeenCalledWith({error: 'Quest already completed'});
     });
 
-    it('should return status 400 if access conditions are not satisfied', () => {
+    it('should return status 400 if NFT access conditions isnt satisfied', () => {
         req.body = {
             questId: '4569bee2-8f42-4054-b432-68f6ddbc20b5',
             userId: 'cb413e98-44a4-4bb1-aaa1-0b91ab1707e7',
@@ -50,6 +50,94 @@ describe('Quest test', () => {
             user_data: {
                 completed_quests: [],
                 nfts: [],
+                level: 3,
+            },
+            submission_text: 'test test test',
+        };
+
+        computeHandler(req as Request, res as Response);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({error: 'Access conditions not satisfied'});
+    });
+
+    it('should return status 400 if date access conditions is before (lower) than claimed_at', () => {
+        req.body = {
+            questId: '4569bee2-8f42-4054-b432-68f6ddbc20b5',
+            userId: 'cb413e98-44a4-4bb1-aaa1-0b91ab1707e7',
+            claimed_at: '2023-03-15T10:44:22+0000',
+            access_condition: [
+                {
+                    "type": "date",
+                    "value": "2023-02-15T10:44:22+0000",
+                    "operator": "<"
+                }
+            ],
+            user_data: {
+                completed_quests: [],
+                nfts: [],
+                level: 3,
+            },
+            submission_text: 'test test test',
+        };
+
+        computeHandler(req as Request, res as Response);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({error: 'Access conditions not satisfied'});
+    });
+
+    it('should return status 400 if level condition is lower than user level', () => {
+        req.body = {
+            questId: '4569bee2-8f42-4054-b432-68f6ddbc20b5',
+            userId: 'cb413e98-44a4-4bb1-aaa1-0b91ab1707e7',
+            claimed_at: '2023-03-15T10:44:22+0000',
+            access_condition: [
+                {
+                    "type": "level",
+                    "value": "2",
+                    "operator": ">"
+                }
+            ],
+            user_data: {
+                completed_quests: [],
+                nfts: ["0x1"],
+                level: 3,
+            },
+            submission_text: 'test test test',
+        };
+
+        computeHandler(req as Request, res as Response);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({error: 'Access conditions not satisfied'});
+    });
+
+    it('should return status 400 if one of the conditions isnt satisfied', () => {
+        req.body = {
+            questId: '4569bee2-8f42-4054-b432-68f6ddbc20b5',
+            userId: 'cb413e98-44a4-4bb1-aaa1-0b91ab1707e7',
+            claimed_at: '2023-03-15T10:44:22+0000',
+            access_condition: [
+                {
+                    "type": "nft",
+                    "operator": "contains",
+                    "value": "0x1"
+                },
+                {
+                    "type": "date",
+                    "value": "2023-02-15T10:44:22+0000",
+                    "operator": ">"
+                },
+                {
+                    "type": "level",
+                    "value": "5",
+                    "operator": ">"
+                }
+            ],
+            user_data: {
+                completed_quests: [],
+                nfts: ["0x1"],
                 level: 3,
             },
             submission_text: 'test test test',

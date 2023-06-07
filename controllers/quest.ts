@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-import {AccessCondition, QuestRequestBody, UserData} from '../types';
+import { AccessCondition, QuestRequestBody, UserData } from '../types';
+import { getScore } from "./score";
 
 // todo: add response type
 export function computeHandler(req: Request, res: Response): Response {
-    const { questId, userId, access_condition, user_data, claimed_at }: QuestRequestBody = req.body;
+    const { questId, userId, access_condition, user_data, claimed_at, submission_text }: QuestRequestBody = req.body;
 
     if (user_data.completed_quests.includes(questId)) {
         return res.status(400).json({ error: 'Quest already completed' });
@@ -13,7 +14,7 @@ export function computeHandler(req: Request, res: Response): Response {
         return res.status(400).json({ error: 'Access conditions not satisfied' });
     }
 
-    const score = getScore();
+    const score = getScore(submission_text);
 
     // Check if score is greater than or equal to 5
     if (score >= 5) {
@@ -52,9 +53,4 @@ function checkCondition(condition: AccessCondition, userData: UserData, claimed_
         default:
             return false;
     }
-}
-
-function getScore() {
-    // todo:
-    return Math.floor(Math.random() * 10);
 }
