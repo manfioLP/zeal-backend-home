@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import { Server } from 'http';
+import { computeHandler } from "./controllers/quest";
 
 class App {
     public app: Express;
@@ -22,6 +23,8 @@ class App {
         this.app.get('/health', (req: Request, res: Response) => {
             return res.json({status: 'ok', success: true})
         });
+
+        this.app.post('/compute', computeHandler)
     }
 
     private start(): void {
