@@ -70,7 +70,7 @@ describe("Score Test", () => {
 
     describe ("Joyful words", () => {
         it('should return a score 3 for one joy word', () => {
-            const score = getScore("Joyful");
+            const score = getScore("joyful");
 
             expect(score).toBe(3);
         });

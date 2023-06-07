@@ -11,9 +11,8 @@ export function getScore(submissionText: string) {
         score += 2;
     }
 
-    const r = removeSpecialChars(submissionText);
-    const joyfulWords = ['Joyful', 'Happy', 'Vibrant', 'Thrilled', 'Euphoric', 'Cheerful', 'Delighted'];
-    const joyCounter = removeSpecialChars(submissionText).split(' ').filter((word) => joyfulWords.includes(word)).length;
+    const joyfulWords = ['joyful', 'happy', 'vibrant', 'thrilled', 'euphoric', 'cheerful', 'delighted'];
+    const joyCounter = removeSpecialChars(submissionText).split(' ').filter((word) => joyfulWords.includes(word.toLowerCase())).length;
     score += Math.min(joyCounter, 3)*3;
 
     if (containsRepetitiveWords(submissionText)) {
